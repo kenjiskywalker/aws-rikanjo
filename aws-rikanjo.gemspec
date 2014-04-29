@@ -21,7 +21,3 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
 end
-
-m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m1.large", ri_util = "light")
-m.total_cost_year
-
