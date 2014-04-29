@@ -47,18 +47,18 @@ module Aws
       end
 
       # parse
-      ondemandjson_data = Yajl::Parser.parse(json)
       json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({vers:0.01,",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
+      ondemand_json_data = Yajl::Parser.parse(json)
 
       # select 'region' and 'instance_type'
-      ondemandjson_data["config"]["regions"].each do |r|
+      ondemand_json_data["config"]["regions"].each do |r|
         # r = {"region"=>"us-east", "instanceTypes"=>[{"type"=>"generalCurrentGen", ...
         next unless r["region"] == region
         r["instanceTypes"].each do |type|
           # type = {"type"=>"generalCurrentGen", "sizes"=>[{"size"=>"m3.medium", "vCPU"=>"1" ...
           type["sizes"].each do |i|
             next unless i["size"] == instance_type
-            @om_info = {:hr_price => i["valueColumns"][0]["prices"]["USD"] }
+            @om_info = {:hr_price => i["valueColumns"][0]["prices"]["USD"]}
           end
         end
       end
@@ -157,7 +157,6 @@ module Aws
       # exp. @om_info = {:hr_price=>"0.350", :yr_price=>3066.0}
       # exp. @ri_info = {"ri_util"=>{:upfront=>"NNN", :hr_price=>"NNN",
       #                  :sweet_spot_price=>NNN, :sweet_spot_start_day=>78, :yr_price=>2074.56}}
-
       return @om_info, @ri_info
     end
 
@@ -187,7 +186,6 @@ end
 
 # m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m3.large", ri_util = "medium")
 # m.total_cost_year
-#
 # "region" : ap-northeast-1
 # "instance_type" : m1.large
 # "ri_util" : light
