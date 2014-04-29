@@ -1,6 +1,6 @@
 # Aws::Rikanjo
 
-RI Cost Calc Tool.
+RI Cost Calc Tool( Only new price ).
 
 ## Installation
 
@@ -23,7 +23,7 @@ example
 ```
 require "aws/rikanjo"
 
-a = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m1.large", ri_util = "light")
+a = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m3.large", ri_util = "medium")
 a.total_cost_year
 
 # "region" : ap-northeast-1
@@ -36,7 +36,7 @@ a.total_cost_year
 # "reserved year price (doller)" : 2074.56
 # "reserved upfront (doller)" : 270
 # "sweet spot day (day)" : 78
-# "sweet spot date (date)" : 2014-07-16
+# "sweet spot date (date)" : 2014-07-17
 # "sweet spot price (doller)" : 660.58
 ```
 

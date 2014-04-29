@@ -40,15 +40,15 @@ module Aws
       end
 
        # TODO: merge om and ri
-      uri = URI.parse('http://aws-assets-pricing-prod.s3.amazonaws.com/pricing/ec2/linux-od.js')
+      uri = URI.parse('http://a0.awsstatic.com/pricing/1/ec2/linux-od.min.js')
       Net::HTTP.start(uri.host, uri.port) do |http|
         response = http.get(uri.request_uri)
         json = response.body
       end
 
       # parse
-      json = json.gsub(/^callback\(\n  /,'').gsub(/\n\)/, '')
       ondemandjson_data = Yajl::Parser.parse(json)
+      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({vers:0.01,",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
 
       # select 'region' and 'instance_type'
       ondemandjson_data["config"]["regions"].each do |r|
@@ -97,13 +97,13 @@ module Aws
       json              = nil
       reservedjson_data = nil
 
-      uri = URI.parse("http://aws-assets-pricing-prod.s3.amazonaws.com/pricing/ec2/linux-ri-#{ri_util}.js")
+      uri = URI.parse("http://a0.awsstatic.com/pricing/1/ec2/linux-ri-#{ri_util}.min.js")
       Net::HTTP.start(uri.host, uri.port) do |http|
         response = http.get(uri.request_uri)
         json = response.body
       end
 
-      json = json.gsub(/callback\(\n/,'').gsub(/\n\)/, '')
+      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({vers:0.01,",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
       reservedjson_data = Yajl::Parser.parse(json)
 
       reservedjson_data["config"]["regions"].each do |r|
@@ -185,7 +185,7 @@ module Aws
   end
 end
 
-# m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m1.large", ri_util = "light")
+# m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m3.large", ri_util = "medium")
 # m.total_cost_year
 #
 # "region" : ap-northeast-1
