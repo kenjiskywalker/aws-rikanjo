@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = "0.0.1"
   spec.authors       = ["kenjiskywalker"]
   spec.email         = ["git@kenjiskywalker.org"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{AWS RI Cost Calc Tool}
+  spec.summary       = %q{calc 1 year cost. check sweet spot}
+  spec.homepage      = "https://github.com/kenjiskywalker/aws-rikanjo"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -21,3 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
 end
+
+m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m1.large", ri_util = "light")
+m.total_cost_year
+
