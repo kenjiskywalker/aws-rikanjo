@@ -21,7 +21,7 @@ Or install it yourself as:
 example
 
 ```
-require "./aws-rikanjo/lib/aws/rikanjo"
+require "aws/rikanjo"
 
 a = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m1.large", ri_util = "light")
 a.total_cost_year
