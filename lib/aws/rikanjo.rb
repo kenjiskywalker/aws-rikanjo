@@ -186,15 +186,16 @@ end
 
 # m = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m3.large", ri_util = "medium")
 # m.total_cost_year
-# "region" : ap-northeast-1
-# "instance_type" : m1.large
-# "ri_util" : light
-# "discont percent (percent)" : 32.34
-# "ondemand hour price (doller)" : 0.350
-# "reserved hour price (doller)" : 0.206
-# "ondemand year price (doller)" : 3066.0
-# "reserved year price (doller)" : 2074.56
-# "reserved upfront (doller)" : 270
-# "sweet spot day (day)" : 78
-# "sweet spot date (date)" : 2014-07-17
-# "sweet spot price (doller)" : 660.58
+#
+#  "region" : ap-northeast-1
+#  "instance_type" : m3.large
+#  "ri_util" : medium
+#  "discont percent (percent)" : 35.09
+#  "ondemand hour price (doller)" : 0.203
+#  "reserved hour price (doller)" : 0.086
+#  "ondemand year price (doller)" : 1778.28
+#  "reserved year price (doller)" : 1154.36
+#  "reserved upfront (doller)" : 401
+#  "sweet spot day (day)" : 142
+#  "sweet spot date (date)" : 2014-09-19
+#  "sweet spot price (doller)" : 696.15
