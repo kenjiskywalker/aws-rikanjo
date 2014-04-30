@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.join(File.dirname(File.dirname(__FILE__)), 'lib'))
+
+require 'rubygems'
+require 'optparse'
+
+options = { }
+
+optparse = OptionParser.new do |opts|
+
+  opts.banner = "Usage: rikanjo [options]"
+
+  region_values = %w[us-east-1 us-west-1 us-west-2 eu-west-1 ap-southeast-1 ap-northeast-1 ap-southeast-2 sa-east-1 ]
+  opts.on("-r", "--region=VALUE", region_values, "specify aws-region (#{region_values.join('/')})") do |value|
+    options[:region] = value
+  end
+
+  opts.on("-t", "--instance_type=VALUE", "specify ec2-instance-type") do |value|
+    options[:instance_type] = value
+  end
+
+  ri_util_values = %w[light medium heavy]
+  opts.on("-u", "--ri_util=VALUE", ri_util_values, "specify ri-util (#{ri_util_values.join('/')})") do |value|
+    options[:ri_util] = value
+  end
+
+  opts.on("-h", "--help") do
+    puts opts
+    exit
+  end
+
+end
+
+# validation
+begin
+  optparse.parse!
+  require_args = [:region, :instance_type, :ri_util]
+  error_args = require_args.select{ |param| options[param].nil? }
+  if not error_args.empty?
+    puts "require arguments: #{error_args.join(', ')}"
+    puts
+    puts optparse
+    exit
+  end
+rescue
+  puts $!.to_s
+  puts
+  puts optparse
+  exit
+end
+
+# rikanjo
+require "aws/rikanjo"
+a = Aws::RiKanjoo.new(
+    region = options[:region],
+    instance_type = options[:instance_type],
+    ri_util = options[:ri_util],
+)
+a.total_cost_year
