@@ -39,6 +39,25 @@ a.total_cost_year
 # "sweet spot price (doller)" : 696.15
 ```
 
+## CLI Usage
+
+help text:
+
+```
+$ rikanjo --help
+Usage: rikanjo [options]
+    -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
+    -t, --instance_type=VALUE        specify ec2-instance-type
+    -u, --ri_util=VALUE              specify ri-util (light/medium/heavy)
+    -h, --help
+```
+
+example:
+
+```
+$ rikanjo -r ap-northeast-1 -t c3.large -u medium
+```
+
 ## Contributing
 
 1. Fork it
