@@ -15,6 +15,8 @@ module Aws
       @ri_util       = ri_util
       @om_info       = Hash.new
       @ri_info       = Hash.new
+      @current_price_url  = 'http://a0.awsstatic.com/pricing/1/ec2'
+      @previous_price_url = 'http://a0.awsstatic.com/pricing/1/ec2/previous-generation'
     end
 
     def om_get_hr_price
@@ -40,7 +42,7 @@ module Aws
       end
 
        # TODO: merge om and ri
-      uri = URI.parse('http://a0.awsstatic.com/pricing/1/ec2/linux-od.min.js')
+      uri = URI.parse("#{price_url}/linux-od.min.js")
       Net::HTTP.start(uri.host, uri.port) do |http|
         response = http.get(uri.request_uri)
         json = response.body
@@ -97,13 +99,13 @@ module Aws
       json              = nil
       reservedjson_data = nil
 
-      uri = URI.parse("http://a0.awsstatic.com/pricing/1/ec2/linux-ri-#{ri_util}.min.js")
+      uri = URI.parse("#{price_url}/#{ri_price_file}")
       Net::HTTP.start(uri.host, uri.port) do |http|
         response = http.get(uri.request_uri)
         json = response.body
       end
 
-      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({vers:0.01,",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
+      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
       reservedjson_data = Yajl::Parser.parse(json)
 
       reservedjson_data["config"]["regions"].each do |r|
@@ -181,6 +183,23 @@ module Aws
        puts "\"sweet spot date (date)\" : #{sweet_spot_date}"
        puts "\"sweet spot price (doller)\" : #{@ri_info[@ri_util][:sweet_spot_price]}"
     end
+
+    def price_url
+      return (previous_generation_type) ? @previous_price_url : @current_price_url
+    end
+
+    def ri_price_file
+      return (previous_generation_type) ? "#{@ri_util}_linux.min.js" : "linux-ri-#{@ri_util}.min.js"
+    end
+
+    def previous_generation_type
+      case @instance_type
+      when /^(c1|m2|cc2\.8xlarge|cr1\.8xlarge|hi1\.4xlarge|cg1\.4xlarge)/ then true
+      when /^m1/ then (@instance_type == "m1.small") ? false : true
+      else false
+      end
+    end
+
   end
 end
 
