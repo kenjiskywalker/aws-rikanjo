@@ -5,7 +5,7 @@ require 'aws/rikanjo/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "aws-rikanjo"
-  spec.version       = "0.0.3"
+  spec.version       = "0.0.4"
   spec.authors       = ["kenjiskywalker"]
   spec.email         = ["git@kenjiskywalker.org"]
   spec.description   = %q{AWS RI Cost Calc Tool}
