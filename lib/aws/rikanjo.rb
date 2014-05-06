@@ -168,6 +168,23 @@ module Aws
        calc_year_cost 
 
        discount_per = (100 - ((@ri_info[@ri_util][:yr_price] / @om_info[:yr_price]) * 100)).round(2)
+
+       # If the Reserved Instance does not become cheaper than the On-demand Instance.
+       if @ri_info[@ri_util][:sweet_spot_start_day].nil?
+         puts "\"Price of the Reserved Instance is higher than the price of On-Demand Instances.\""
+         puts "\"region\" : #{@region}"
+         puts "\"instance_type\" : #{@instance_type}"
+         puts "\"ri_util\" : #{@ri_util}"
+         puts "\"discont percent (percent)\" : #{discount_per}"
+         puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
+         puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
+         puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
+         puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
+         puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
+
+         exit 1
+       end
+
        sweet_spot_date = Date.today + @ri_info[@ri_util][:sweet_spot_start_day]
 
        puts "\"region\" : #{@region}"
