@@ -88,13 +88,13 @@ module Aws
         region = "sa-east-1"
       end
 
-      get_ri_price
+      get_ri_price(region)
     end
 
-    def get_ri_price
+    def get_ri_price(region)
       ri_util = @ri_util
 
-      region            = @region
+      region            = region
       instance_type     = @instance_type
       json              = nil
       reservedjson_data = nil
