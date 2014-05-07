@@ -7,9 +7,9 @@ require 'date'
 
 module Aws
   class RiKanjoo
-    attr_reader :region, :instance_type
+    attr_reader :region, :instance_type, :ri_util
 
-    def initialize(region="us-west", instance_type="t1.micro", ri_util="medium")
+    def initialize(region, instance_type, ri_util)
       @region        = region
       @instance_type = instance_type
       @ri_util       = ri_util
