@@ -26,6 +26,8 @@ module Aws
 
       # not same ri region
       case region
+      when "us-east-1"
+        region = "us-east"
       when "us-west-1"
         region = "us-west"
       when "eu-west-1"
@@ -73,6 +75,8 @@ module Aws
 
       # not same om region
       case region
+      when "us-east-1"
+        region = "us-east"
       when "us-west"
         region = "us-west-1"
       when "eu-ireland"
