@@ -23,7 +23,6 @@ module Aws
       region             = @region
       instance_type      = @instance_type
       json               = nil
-      ondemandjson_data  = nil
 
       # not same ri region
       case region
