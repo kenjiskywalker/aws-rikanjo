@@ -9,7 +9,21 @@ options = { }
 
 optparse = OptionParser.new do |opts|
 
-  opts.banner = "Usage: rikanjo [options]"
+  opts.banner = "Usage: rikanjo ec2/rds [options]"
+
+  # subcommand
+  mode = ARGV.shift
+  if mode == 'ec2'
+  elsif mode == 'rds'
+    opts.on("--multiaz", "enable multi-az") do |value|
+      options[:multiaz] = value
+    end
+  else
+    $stderr.puts "no such subcommand: #{mode}"
+    puts opts
+    exit 1
+  end
+  options[:mode] = mode
 
   region_values = %w[us-east-1 us-west-1 us-west-2 eu-west-1 ap-southeast-1 ap-northeast-1 ap-southeast-2 sa-east-1 ]
   opts.on("-r", "--region=VALUE", region_values, "specify aws-region (#{region_values.join('/')})") do |value|
@@ -32,6 +46,8 @@ optparse = OptionParser.new do |opts|
 
 end
 
+
+
 # validation
 begin
   optparse.parse!
@@ -53,8 +69,10 @@ end
 # rikanjo
 require "aws/rikanjo"
 a = Aws::RiKanjoo.new(
+    mode = options[:mode],
     region = options[:region],
     instance_type = options[:instance_type],
     ri_util = options[:ri_util],
+    multiaz = options[:multiaz],
 )
 a.total_cost_year
