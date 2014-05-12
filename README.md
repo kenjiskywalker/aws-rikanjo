@@ -41,11 +41,13 @@ a.total_cost_year
 
 ## CLI Usage
 
+### EC2
+
 help text:
 
 ```
-$ rikanjo --help
-Usage: rikanjo [options]
+$ rikanjo ec2 --help
+Usage: rikanjo ec2/rds [options]
     -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
     -t, --instance_type=VALUE        specify ec2-instance-type
     -u, --ri_util=VALUE              specify ri-util (light/medium/heavy)
@@ -55,8 +57,30 @@ Usage: rikanjo [options]
 example:
 
 ```
-$ rikanjo -r ap-northeast-1 -t c3.large -u medium
+$ rikanjo ec2 -r ap-northeast-1 -t c3.large -u medium
 ```
+
+### RDS
+
+help text:
+
+```
+$ rikanjo rds --help
+Usage: rikanjo ec2/rds [options]
+        --multiaz                    enable multi-az
+    -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
+    -t, --instance_type=VALUE        specify ec2-instance-type
+    -u, --ri_util=VALUE              specify ri-util (light/medium/heavy)
+    -h, --help
+```
+
+example:
+
+```
+$ rikanjo rds -r ap-northeast-1 -t m2.xlarge -u heavy --multiaz
+```
+
+
 
 ## Contributing
 

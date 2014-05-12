@@ -4,132 +4,41 @@ require 'net/http'
 require 'uri'
 require 'yajl'
 require 'date'
+require_relative 'rikanjo/mode/ec2'
+require_relative 'rikanjo/mode/rds'
 
 module Aws
   class RiKanjoo
     attr_reader :region, :instance_type, :ri_util
 
-    def initialize(region, instance_type, ri_util)
+    def initialize(mode='ec2', region, instance_type, ri_util, multiaz)
+      if mode == 'ec2'
+        @mode_class = Aws::RiKanjoo::Mode::Ec2.new(region, instance_type, ri_util)
+      elsif mode == 'rds'
+        @mode_class = Aws::RiKanjoo::Mode::Rds.new(region, instance_type, ri_util, multiaz)
+      end
       @region        = region
       @instance_type = instance_type
       @ri_util       = ri_util
       @om_info       = Hash.new
       @ri_info       = Hash.new
-      @current_price_url  = 'http://a0.awsstatic.com/pricing/1/ec2'
-      @previous_price_url = 'http://a0.awsstatic.com/pricing/1/ec2/previous-generation'
     end
 
     def om_get_hr_price
-      region             = @region
-      instance_type      = @instance_type
-      json               = nil
-
-      # not same ri region
-      case region
-      when "us-east-1"
-        region = "us-east"
-      when "us-west-1"
-        region = "us-west"
-      when "eu-west-1"
-        region = "eu-ireland"
-      when "ap-southeast-1"
-        region = "apac-sin"
-      when "ap-northeast-1"
-        region = "apac-tokyo"
-      when "ap-southeast-2"
-        region = "apac-syd"
-      when "sa-east-1"
-        region = "sa-east-1"
-      end
-
        # TODO: merge om and ri
-      uri = URI.parse("#{price_url}/linux-od.min.js")
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        response = http.get(uri.request_uri)
-        json = response.body
-      end
+      uri = URI.parse("#{@mode_class.price_url}/#{@mode_class.om_price_file}")
+      contents = Net::HTTP.get(uri)
 
-      # parse
-      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({vers:0.01,",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
-      ondemand_json_data = Yajl::Parser.parse(json)
-
-      # select 'region' and 'instance_type'
-      ondemand_json_data["config"]["regions"].each do |r|
-        # r = {"region"=>"us-east", "instanceTypes"=>[{"type"=>"generalCurrentGen", ...
-        next unless r["region"] == region
-        r["instanceTypes"].each do |type|
-          # type = {"type"=>"generalCurrentGen", "sizes"=>[{"size"=>"m3.medium", "vCPU"=>"1" ...
-          type["sizes"].each do |i|
-            next unless i["size"] == instance_type
-            @om_info = {:hr_price => i["valueColumns"][0]["prices"]["USD"]}
-          end
-        end
-      end
-
-      # :hr_price => price
-      return @om_info
+      # parse om info
+      @om_info = @mode_class.om_price_from_contents(contents)
     end
 
     def ri_get_hr_price_and_upfront
-      region = @region
+      uri = URI.parse("#{@mode_class.price_url}/#{@mode_class.ri_price_file}")
+      contents = Net::HTTP.get(uri)
 
-      # not same om region
-      case region
-      when "us-east-1"
-        region = "us-east"
-      when "us-west"
-        region = "us-west-1"
-      when "eu-ireland"
-        region = "eu-west-1"
-      when "apac-sin"
-        region = "ap-southeast-1"
-      when "apac-tokyo"
-        region = "ap-northeast-1"
-      when "apac-syd"
-        region = "ap-southeast-2"
-      when "sa-east-1"
-        region = "sa-east-1"
-      end
-
-      get_ri_price(region)
-    end
-
-    def get_ri_price(region)
-      ri_util = @ri_util
-
-      region            = region
-      instance_type     = @instance_type
-      json              = nil
-      reservedjson_data = nil
-
-      uri = URI.parse("#{price_url}/#{ri_price_file}")
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        response = http.get(uri.request_uri)
-        json = response.body
-      end
-
-      json = json.gsub("/*\n * This file is intended for use only on aws.amazon.com. We do not guarantee its availability or accuracy.\n *\n * Copyright 2014 Amazon.com, Inc. or its affiliates. All rights reserved.\n */\ncallback({",'{').gsub("\);", '').gsub(/([a-zA-Z]+):/, '"\1":')
-      reservedjson_data = Yajl::Parser.parse(json)
-
-      reservedjson_data["config"]["regions"].each do |r|
-        next unless r["region"] == region
-        r["instanceTypes"].each do |type|
-          type["sizes"].each do |i|
-            next unless i["size"] == instance_type
-
-            i["valueColumns"].each do |y|
-              case y["name"]
-              when "yrTerm1"
-                @ri_info[ri_util] = {:upfront => y["prices"]["USD"]}
-              when "yrTerm1Hourly"
-                @ri_info[ri_util].store(:hr_price, y["prices"]["USD"])
-              end
-            end
-          end
-        end
-      end
-      # exp. {"light"=>{:upfront=>"270", :hr_price=>"0.206"}}
-      return @ri_info
+      # parse ri info
+      @ri_info = @mode_class.ri_price_from_contents(contents)
     end
 
     def calc_year_cost
@@ -202,22 +111,6 @@ module Aws
        puts "\"sweet spot day (day)\" : #{@ri_info[@ri_util][:sweet_spot_start_day]}"
        puts "\"sweet spot date (date)\" : #{sweet_spot_date}"
        puts "\"sweet spot price (doller)\" : #{@ri_info[@ri_util][:sweet_spot_price]}"
-    end
-
-    def price_url
-      return (previous_generation_type) ? @previous_price_url : @current_price_url
-    end
-
-    def ri_price_file
-      return (previous_generation_type) ? "#{@ri_util}_linux.min.js" : "linux-ri-#{@ri_util}.min.js"
-    end
-
-    def previous_generation_type
-      case @instance_type
-      when /^(c1|m2|cc2\.8xlarge|cr1\.8xlarge|hi1\.4xlarge|cg1\.4xlarge)/ then true
-      when /^m1/ then (@instance_type == "m1.small") ? false : true
-      else false
-      end
     end
 
   end
