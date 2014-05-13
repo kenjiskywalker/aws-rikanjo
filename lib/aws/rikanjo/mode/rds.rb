@@ -97,6 +97,7 @@ module Aws
           case region
           when "us-east-1"      then "us-east"
           when "us-west-1"      then "us-west"
+          when "us-west-2"      then "us-west-2"
           when "eu-west-1"      then "eu-ireland"
           when "ap-southeast-1" then "apac-sin"
           when "ap-northeast-1" then "apac-tokyo"
@@ -104,6 +105,7 @@ module Aws
           when "sa-east-1"      then "sa-east-1"
           end
         end
+
       end
     end
   end

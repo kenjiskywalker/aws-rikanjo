@@ -37,7 +37,7 @@ module Aws
         end
 
         def ri_price_from_contents contents
-          region = @region
+          region = self.clean_region(@region)
 
           # parse
           json = self.parse_contents(contents)
@@ -95,12 +95,17 @@ module Aws
           case region
           when "us-east-1"      then "us-east"
           when "us-west-1"      then "us-west"
+          when "us-west-2"      then "us-west-2"
           when "eu-west-1"      then "eu-ireland"
           when "ap-southeast-1" then "apac-sin"
           when "ap-northeast-1" then "apac-tokyo"
           when "ap-southeast-2" then "apac-syd"
           when "sa-east-1"      then "sa-east-1"
           end
+        end
+
+        def clean_region region
+          return region.gsub(/^us-east-1$/, 'us-east')
         end
 
       end
