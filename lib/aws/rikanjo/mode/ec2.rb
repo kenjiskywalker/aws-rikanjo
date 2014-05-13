@@ -34,6 +34,8 @@ module Aws
               end
             end
           end
+
+          abort("[ec2][#{region}][#{@instance_type}] Not found om-price?")
         end
 
         def ri_price_from_contents contents
@@ -42,14 +44,16 @@ module Aws
           # parse
           json = self.parse_contents(contents)
 
-          ri_info = {}
+          ri_info = nil
 
           json["config"]["regions"].each do |r|
             next unless r["region"] == region
+
             r["instanceTypes"].each do |type|
               type["sizes"].each do |i|
                 next unless i["size"] == @instance_type
 
+                ri_info = ri_info || {}
                 i["valueColumns"].each do |y|
                   case y["name"]
                   when "yrTerm1"
@@ -61,6 +65,8 @@ module Aws
               end
             end
           end
+
+          abort("[ec2][#{region}][#{@instance_type}] Not found ri-price?") unless ri_info
 
           return ri_info
         end
