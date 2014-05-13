@@ -68,5 +68,62 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
   end
 
+  describe 'contents validation' do
+
+    before :all do
+      # rikanjo (current)
+      a1 = Aws::RiKanjoo::Mode::Ec2.new(
+          region        = 'ap-northeast-1',
+          instance_type = 'm3.medium',
+          ri_util       = 'medium',
+      )
+      # rikanjo (previous)
+      a2 = Aws::RiKanjoo::Mode::Ec2.new(
+          region        = 'ap-northeast-1',
+          instance_type = 'm1.medium',
+          ri_util       = 'medium',
+      )
+      @c_om_current_price = get_sleep("#{a1.price_url}/#{a1.om_price_file}")
+      @c_ri_current_medium_price = get_sleep("#{a1.price_url}/#{a1.ri_price_file}")
+      @c_om_previous_price = get_sleep("#{a2.price_url}/#{a2.om_price_file}")
+      @c_ri_previous_medium_price = get_sleep("#{a2.price_url}/#{a2.ri_price_file}")
+    end
+
+    it "is able to get the price" do
+      regions.each do |region|
+        a = Aws::RiKanjoo::Mode::Ec2.new(
+            region        = region,
+            instance_type = 'm3.large',
+            ri_util       = 'medium',
+        )
+        # om
+        om_info = a.om_price_from_contents(@c_om_current_price)
+        expect(om_info[:hr_price]).not_to be_nil
+        # ri
+        ri_info = a.ri_price_from_contents(@c_ri_current_medium_price)
+        expect(ri_info["medium"][:upfront]).not_to be_nil
+        expect(ri_info["medium"][:hr_price]).not_to be_nil
+      end
+    end
+
+    it "an exception is raised when there are no instance-type" do
+      regions.each do |region|
+        a = Aws::RiKanjoo::Mode::Ec2.new(
+            region        = region,
+            instance_type = 'm3.large.not.exists',
+            ri_util       = 'medium',
+        )
+        # raise om
+        expect do
+          om_info = a.om_price_from_contents(@c_om_current_price)
+        end.to raise_error(SystemExit)
+        # raise ri
+        expect do
+          ri_info = a.ri_price_from_contents(@c_ri_current_medium_price)
+        end.to raise_error(SystemExit)
+      end
+    end
+
+  end
 
 end
