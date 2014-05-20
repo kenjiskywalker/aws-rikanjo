@@ -11,7 +11,7 @@ module Aws
   class RiKanjoo
     attr_reader :region, :instance_type, :ri_util
 
-    def initialize(mode='ec2', region, instance_type, ri_util, multiaz)
+    def initialize(mode = 'ec2', region, instance_type, ri_util, multiaz)
       if mode == 'ec2'
         @mode_class = Aws::RiKanjoo::Mode::Ec2.new(region, instance_type, ri_util)
       elsif mode == 'rds'
@@ -20,8 +20,8 @@ module Aws
       @region        = region
       @instance_type = instance_type
       @ri_util       = ri_util
-      @om_info       = Hash.new
-      @ri_info       = Hash.new
+      @om_info       = {}
+      @ri_info       = {}
     end
 
     def om_get_hr_price
@@ -42,7 +42,6 @@ module Aws
     end
 
     def calc_year_cost
-
       om_hr_price = @om_info[:hr_price].to_f
       ri_hr_price = @ri_info[@ri_util][:hr_price].to_f
       upfront    = @ri_info[@ri_util][:upfront].to_f
@@ -53,14 +52,14 @@ module Aws
       sum_om_price = om_day_paid
       sum_ri_price = ri_day_paid + upfront
       365.times.each do |d|
-        d = d + 1
-        sum_om_price = sum_om_price + om_day_paid
-        sum_ri_price = sum_ri_price + ri_day_paid
+        d += 1
+        sum_om_price += om_day_paid
+        sum_ri_price += ri_day_paid
 
         if sum_ri_price < sum_om_price
           @ri_info[@ri_util].store(:sweet_spot_price, sum_ri_price.round(2))
           @ri_info[@ri_util].store(:sweet_spot_start_day, d)
-          break 
+          break
         end
       end
       total_om_price = (om_day_paid * 365).round(2)
@@ -75,44 +74,43 @@ module Aws
     end
 
     def total_cost_year
-       om_get_hr_price
-       ri_get_hr_price_and_upfront
-       calc_year_cost 
+      om_get_hr_price
+      ri_get_hr_price_and_upfront
+      calc_year_cost
 
-       discount_per = (100 - ((@ri_info[@ri_util][:yr_price] / @om_info[:yr_price]) * 100)).round(2)
+      discount_per = (100 - ((@ri_info[@ri_util][:yr_price] / @om_info[:yr_price]) * 100)).round(2)
 
-       # If the Reserved Instance does not become cheaper than the On-demand Instance.
-       if @ri_info[@ri_util][:sweet_spot_start_day].nil?
-         puts "\"Price of the Reserved Instance is higher than the price of On-Demand Instances.\""
-         puts "\"region\" : #{@region}"
-         puts "\"instance_type\" : #{@instance_type}"
-         puts "\"ri_util\" : #{@ri_util}"
-         puts "\"discont percent (percent)\" : #{discount_per}"
-         puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
-         puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
-         puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
-         puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
-         puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
+      # If the Reserved Instance does not become cheaper than the On-demand Instance.
+      if @ri_info[@ri_util][:sweet_spot_start_day].nil?
+        puts "\"Price of the Reserved Instance is higher than the price of On-Demand Instances.\""
+        puts "\"region\" : #{@region}"
+        puts "\"instance_type\" : #{@instance_type}"
+        puts "\"ri_util\" : #{@ri_util}"
+        puts "\"discont percent (percent)\" : #{discount_per}"
+        puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
+        puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
+        puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
+        puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
+        puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
 
-         exit 1
-       end
+        exit 1
+      end
 
-       sweet_spot_date = Date.today + @ri_info[@ri_util][:sweet_spot_start_day]
+      sweet_spot_date = Date.today + @ri_info[@ri_util][:sweet_spot_start_day]
 
-       puts "\"region\" : #{@region}"
-       puts "\"instance_type\" : #{@instance_type}"
-       puts "\"ri_util\" : #{@ri_util}"
-       puts "\"discont percent (percent)\" : #{discount_per}"
-       puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
-       puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
-       puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
-       puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
-       puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
-       puts "\"sweet spot day (day)\" : #{@ri_info[@ri_util][:sweet_spot_start_day]}"
-       puts "\"sweet spot date (date)\" : #{sweet_spot_date}"
-       puts "\"sweet spot price (doller)\" : #{@ri_info[@ri_util][:sweet_spot_price]}"
+      puts "\"region\" : #{@region}"
+      puts "\"instance_type\" : #{@instance_type}"
+      puts "\"ri_util\" : #{@ri_util}"
+      puts "\"discont percent (percent)\" : #{discount_per}"
+      puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
+      puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
+      puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
+      puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
+      puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
+      puts "\"sweet spot day (day)\" : #{@ri_info[@ri_util][:sweet_spot_start_day]}"
+      puts "\"sweet spot date (date)\" : #{sweet_spot_date}"
+      puts "\"sweet spot price (doller)\" : #{@ri_info[@ri_util][:sweet_spot_price]}"
     end
-
   end
 end
 
