@@ -1,5 +1,4 @@
-# Aws::Rikanjo
-
+# Aws::Rikanjo [![Build Status](https://travis-ci.org/kenjiskywalker/aws-rikanjo.svg?branch=master)](https://travis-ci.org/kenjiskywalker/aws-rikanjo)
 RI Cost Calc Tool( Only new price ).
 
 ## Installation
