@@ -13,22 +13,22 @@ module Aws
           @multiaz        = multiaz
         end
 
-        def om_price_from_contents contents
-          region = self.convert_region(@region)
+        def om_price_from_contents(contents)
+          region = convert_region(@region)
 
           # parse
-          json = self.parse_contents(contents)
+          json = parse_contents(contents)
 
           # select 'region' and 'instance_type'
-          json["config"]["regions"].each do |r|
+          json['config']['regions'].each do |r|
             # r = {"region"=>"us-east", "instanceTypes"=>[{"type"=>"generalCurrentGen", ...
-            next unless r["region"] == region
-            r["types"].each do |type|
+            next unless r['region'] == region
+            r['types'].each do |type|
               # type = {"type"=>"generalCurrentGen", "sizes"=>[{"size"=>"m3.medium", "vCPU"=>"1" ...
-              type["tiers"].each do |i|
-                next unless i["name"] == @instance_type
+              type['tiers'].each do |i|
+                next unless i['name'] == @instance_type
 
-                return {:hr_price => i["prices"]["USD"]}
+                return { hr_price: i['prices']['USD'] }
               end
             end
           end
@@ -36,38 +36,38 @@ module Aws
           abort("[rds][#{region}][#{@instance_type}] Not found om-price?")
         end
 
-        def ri_price_from_contents contents
-          region = self.convert_region(@region)
+        def ri_price_from_contents(contents)
+          region = convert_region(@region)
           mtype  = (@multiaz) ? 'multiAZdeployRes' : 'stdDeployRes'
 
           # parse
-          json = self.parse_contents(contents)
+          json = parse_contents(contents)
 
           ri_info = nil
 
-          json["config"]["regions"].each do |r|
-            next unless r["region"] == region
+          json['config']['regions'].each do |r|
+            next unless r['region'] == region
 
-            r["instanceTypes"].each do |type|
+            r['instanceTypes'].each do |type|
               # beauty
-              type["type"].gsub!(/Single-AZ Deployment \(Reserved\)/, 'stdDeployRes')
+              type['type'].gsub!(/Single-AZ Deployment \(Reserved\)/, 'stdDeployRes')
 
-              next unless type["type"] == mtype
+              next unless type['type'] == mtype
 
-              type["tiers"].each do |i|
-                next unless i["size"] == @instance_type
+              type['tiers'].each do |i|
+                next unless i['size'] == @instance_type
 
-                ri_info = ri_info || {}
-                i["valueColumns"].each do |y|
+                ri_info = ri_info ||= {}
+                i['valueColumns'].each do |y|
                   # beauty
-                  y["name"].gsub!(/^year/, 'yr')
-                  y["prices"]["USD"].gsub!(/,/, '')
+                  y['name'].gsub!(/^year/, 'yr')
+                  y['prices']['USD'].gsub!(/,/, '')
 
-                  case y["name"]
-                  when "yrTerm1"
-                    ri_info[@ri_util] = {:upfront => y["prices"]["USD"]}
-                  when "yrTerm1Hourly"
-                    ri_info[@ri_util].store(:hr_price, y["prices"]["USD"])
+                  case y['name']
+                  when 'yrTerm1'
+                    ri_info[@ri_util] = { upfront: y['prices']['USD'] }
+                  when 'yrTerm1Hourly'
+                    ri_info[@ri_util].store(:hr_price, y['prices']['USD'])
                   end
                 end
 
@@ -97,17 +97,17 @@ module Aws
           return Yajl::Parser.parse(data)
         end
 
-        def convert_region region
+        def convert_region(region)
           # not same om region
           case region
-          when "us-east-1"      then "us-east"
-          when "us-west-1"      then "us-west"
-          when "us-west-2"      then "us-west-2"
-          when "eu-west-1"      then "eu-ireland"
-          when "ap-southeast-1" then "apac-sin"
-          when "ap-northeast-1" then "apac-tokyo"
-          when "ap-southeast-2" then "apac-syd"
-          when "sa-east-1"      then "sa-east-1"
+          when 'us-east-1'      then 'us-east'
+          when 'us-west-1'      then 'us-west'
+          when 'us-west-2'      then 'us-west-2'
+          when 'eu-west-1'      then 'eu-ireland'
+          when 'ap-southeast-1' then 'apac-sin'
+          when 'ap-northeast-1' then 'apac-tokyo'
+          when 'ap-southeast-2' then 'apac-syd'
+          when 'sa-east-1'      then 'sa-east-1'
           end
         end
 
