@@ -1,14 +1,14 @@
 require "spec_helper"
-require "aws/rikanjo/mode/ec2"
+require "aws/rikanjo/ec2"
 
 include RikanjoSpecHelper
 
-describe 'AWS::Rikanjo::Mode::Ec2' do
+describe 'AWS::Rikanjo::Ec2' do
 
   describe 'previous type' do
     it "is previous instance type" do
       %w{ m1.medium c1.medium m2.xlarge cc2.8xlarge cr1.8xlarge hi1.4xlarge cg1.4xlarge }.each do |t|
-          a = Aws::RiKanjoo::Mode::Ec2.new(
+          a = Aws::RiKanjoo::Ec2.new(
               region        = 'ap-northeast-1',
               instance_type = t,
               ri_util       = 'light',
@@ -19,7 +19,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
     it "is current instance type" do
       %w{ t1.micro m1.small m3.medium c3.medium r3.xlarge i2.xlarge }.each do |t|
-          a = Aws::RiKanjoo::Mode::Ec2.new(
+          a = Aws::RiKanjoo::Ec2.new(
               region        = 'ap-northeast-1',
               instance_type = t,
               ri_util       = 'light',
@@ -31,7 +31,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
   describe 'url' do
     it "build previous price url" do
-      a = Aws::RiKanjoo::Mode::Ec2.new(
+      a = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm1.medium',
           ri_util       = 'light',
@@ -40,7 +40,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
     end
 
     it "build current price url" do
-      a = Aws::RiKanjoo::Mode::Ec2.new(
+      a = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.medium',
           ri_util       = 'light',
@@ -49,7 +49,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
     end
 
     it "build previous ri price file" do
-      a = Aws::RiKanjoo::Mode::Ec2.new(
+      a = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm1.medium',
           ri_util       = 'light',
@@ -58,7 +58,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
     end
 
     it "build current ri price file" do
-      a = Aws::RiKanjoo::Mode::Ec2.new(
+      a = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.medium',
           ri_util       = 'heavy',
@@ -72,13 +72,13 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
     before :all do
       # rikanjo (current)
-      a1 = Aws::RiKanjoo::Mode::Ec2.new(
+      a1 = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.medium',
           ri_util       = 'medium',
       )
       # rikanjo (previous)
-      a2 = Aws::RiKanjoo::Mode::Ec2.new(
+      a2 = Aws::RiKanjoo::Ec2.new(
           region        = 'ap-northeast-1',
           instance_type = 'm1.medium',
           ri_util       = 'medium',
@@ -91,7 +91,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
     it "is able to get the price" do
       regions.each do |region|
-        a = Aws::RiKanjoo::Mode::Ec2.new(
+        a = Aws::RiKanjoo::Ec2.new(
             region        = region,
             instance_type = 'm3.large',
             ri_util       = 'medium',
@@ -108,7 +108,7 @@ describe 'AWS::Rikanjo::Mode::Ec2' do
 
     it "an exception is raised when there are no instance-type" do
       regions.each do |region|
-        a = Aws::RiKanjoo::Mode::Ec2.new(
+        a = Aws::RiKanjoo::Ec2.new(
             region        = region,
             instance_type = 'm3.large.not.exists',
             ri_util       = 'medium',
