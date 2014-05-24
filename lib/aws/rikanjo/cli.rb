@@ -1,3 +1,4 @@
+require 'optparse'
 require 'aws/rikanjo/base'
 
 module Aws
