@@ -7,6 +7,16 @@ describe 'AWS::Rikanjo::Mode::Rds' do
 
   describe 'url' do
 
+    it "build previous price url" do
+      a = Aws::RiKanjoo::Mode::Rds.new(
+          region        = 'ap-northeast-1',
+          instance_type = 'm1.large',
+          ri_util       = 'light',
+          multiaz       = false,
+      )
+      expect(a.price_url).to eq "http://a0.awsstatic.com/pricing/1/rds/mysql/previous-generation"
+    end
+
     it "build current price url" do
       a = Aws::RiKanjoo::Mode::Rds.new(
           region        = 'ap-northeast-1',
@@ -14,7 +24,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
           ri_util       = 'light',
           multiaz       = false,
       )
-      expect(a.price_url).to eq "https://a0.awsstatic.com/pricing/1/rds/mysql"
+      expect(a.price_url).to eq "http://a0.awsstatic.com/pricing/1/rds/mysql"
     end
 
     it "build current om price file" do
