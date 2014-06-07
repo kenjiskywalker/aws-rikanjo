@@ -22,20 +22,22 @@ example
 ```
 require "aws/rikanjo"
 
-a = Aws::RiKanjoo.new(region = "ap-northeast-1", instance_type = "m3.large", ri_util = "medium")
+a = Aws::RiKanjoo::Base.new('ec2', 'ap-northeast-1', 'm3.xlarge', 'medium')
 a.total_cost_year
-# "region" : ap-northeast-1
-# "instance_type" : m3.large
-# "ri_util" : medium
-# "discont percent (percent)" : 35.09
-# "ondemand hour price (doller)" : 0.203
-# "reserved hour price (doller)" : 0.086
-# "ondemand year price (doller)" : 1778.28
-# "reserved year price (doller)" : 1154.36
-# "reserved upfront (doller)" : 401
-# "sweet spot day (day)" : 142
-# "sweet spot date (date)" : 2014-09-19
-# "sweet spot price (doller)" : 696.15
+{
+  "sweet spot price (doller)": "269.08",
+  "sweet spot date (date)": "2015-02-17",
+  "sweet spot day (day)": "254",
+  "reserved upfront (doller)": "61",
+  "region": "us-east-1",
+  "instance_type": "m1.small",
+  "ri_util": "light",
+  "discont percent (percent)": "6.9",
+  "ondemand hour price (doller)": "0.044",
+  "reserved hour price (doller)": "0.034",
+  "ondemand year price (doller)": "385.44",
+  "reserved year price (doller)": "358.84"
+}
 ```
 
 ## CLI Usage
