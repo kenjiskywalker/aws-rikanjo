@@ -9,7 +9,8 @@ module Aws
           @instance_type  = "db.#{instance_type}"
           @ri_util        = ri_util
           @rdbms          = 'mysql'
-          @price_url      = "https://a0.awsstatic.com/pricing/1/rds/#{@rdbms}"
+          @current_price_url  = "http://a0.awsstatic.com/pricing/1/rds/#{@rdbms}"
+          @previous_price_url = "http://a0.awsstatic.com/pricing/1/rds/#{@rdbms}/previous-generation"
           @multiaz        = multiaz
         end
 
@@ -38,7 +39,7 @@ module Aws
 
         def ri_price_from_contents(contents)
           region = convert_region(@region)
-          mtype  = (@multiaz) ? 'multiAZdeployRes' : 'stdDeployRes'
+          mtype  = (@multiaz) ? 'Multi-AZ' : 'Single-AZ'
 
           # parse
           json = parse_contents(contents)
@@ -49,10 +50,7 @@ module Aws
             next unless r['region'] == region
 
             r['instanceTypes'].each do |type|
-              # beauty
-              type['type'].gsub!(/Single-AZ Deployment \(Reserved\)/, 'stdDeployRes')
-
-              next unless type['type'] == mtype
+              next unless type['type'] =~ /#{mtype}/
 
               type['tiers'].each do |i|
                 next unless i['size'] == @instance_type
@@ -81,7 +79,7 @@ module Aws
         end
 
         def price_url
-          @price_url
+          return (self.previous_generation_type) ? @previous_price_url : @current_price_url
         end
 
         def om_price_file
@@ -90,6 +88,14 @@ module Aws
 
         def ri_price_file
           return "pricing-#{@ri_util}-utilization-reserved-instances.min.js"
+        end
+
+        def previous_generation_type
+          case @instance_type
+          when /^db.(c1|m2|cc2\.8xlarge|cr1\.8xlarge|hi1\.4xlarge|cg1\.4xlarge)/ then true
+          when /^db.m1/ then (@instance_type == 'db.m1.small') ? false : true
+          else false
+          end
         end
 
         def parse_contents data
