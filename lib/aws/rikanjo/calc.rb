@@ -8,19 +8,19 @@ module Aws
     class Calc
       def om_get_hr_price
          # TODO: merge om and ri
-        uri = URI.parse("#{@mode_class.price_url}/#{@mode_class.om_price_file}")
+        uri = URI.parse("#{@mode.price_url}/#{@mode.om_price_file}")
         contents = Net::HTTP.get(uri)
 
         # parse om info
-        @om_info = @mode_class.om_price_from_contents(contents)
+        @om_info = @mode.om_price_from_contents(contents)
       end
 
       def ri_get_hr_price_and_upfront
-        uri = URI.parse("#{@mode_class.price_url}/#{@mode_class.ri_price_file}")
+        uri = URI.parse("#{@mode.price_url}/#{@mode.ri_price_file}")
         contents = Net::HTTP.get(uri)
 
         # parse ri info
-        @ri_info = @mode_class.ri_price_from_contents(contents)
+        @ri_info = @mode.ri_price_from_contents(contents)
       end
 
       def calc_year_cost

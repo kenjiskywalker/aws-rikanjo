@@ -9,9 +9,9 @@ module Aws
 
       def initialize(mode = 'ec2', region, instance_type, ri_util, multiaz)
         if mode == 'ec2'
-          @mode_class = Aws::RiKanjoo::Ec2.new(region, instance_type, ri_util)
+          @mode = Aws::RiKanjoo::Ec2.new(region, instance_type, ri_util)
         elsif mode == 'rds'
-          @mode_class = Aws::RiKanjoo::Rds.new(region, instance_type, ri_util, multiaz)
+          @mode = Aws::RiKanjoo::Rds.new(region, instance_type, ri_util, multiaz)
         end
         @region        = region
         @instance_type = instance_type
