@@ -2,6 +2,7 @@ require 'net/http'
 require 'uri'
 require 'yajl'
 require 'date'
+require 'json'
 
 module Aws
   module RiKanjoo
@@ -64,34 +65,38 @@ module Aws
 
         # If the Reserved Instance does not become cheaper than the On-demand Instance.
         if @ri_info[@ri_util][:sweet_spot_start_day].nil?
-          puts "\"Price of the Reserved Instance is higher than the price of On-Demand Instances.\""
-          puts "\"region\" : #{@region}"
-          puts "\"instance_type\" : #{@instance_type}"
-          puts "\"ri_util\" : #{@ri_util}"
-          puts "\"discont percent (percent)\" : #{discount_per}"
-          puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
-          puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
-          puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
-          puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
-          puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
-
+          message = {
+            "Price of the Reserved Instance is higher than the price of On-Demand Instances." => nil,
+            "region"                       => "#{@region}",
+            "instance_type"                => "#{@instance_type}",
+            "ri_util"                      => "#{@ri_util}",
+            "discont percent (percent)"    => "#{discount_per}",
+            "ondemand hour price (doller)" => "#{@om_info[:hr_price]}",
+            "reserved hour price (doller)" => "#{@ri_info[@ri_util][:hr_price]}",
+            "ondemand year price (doller)" => "#{@om_info[:yr_price]}",
+            "reserved year price (doller)" => "#{@ri_info[@ri_util][:yr_price]}",
+            "reserved upfront (doller)"    => "#{@ri_info[@ri_util][:upfront]}",
+          }
+          puts message.to_json
           exit 1
         end
 
         sweet_spot_date = Date.today + @ri_info[@ri_util][:sweet_spot_start_day]
-
-        puts "\"region\" : #{@region}"
-        puts "\"instance_type\" : #{@instance_type}"
-        puts "\"ri_util\" : #{@ri_util}"
-        puts "\"discont percent (percent)\" : #{discount_per}"
-        puts "\"ondemand hour price (doller)\" : #{@om_info[:hr_price]}"
-        puts "\"reserved hour price (doller)\" : #{@ri_info[@ri_util][:hr_price]}"
-        puts "\"ondemand year price (doller)\" : #{@om_info[:yr_price]}"
-        puts "\"reserved year price (doller)\" : #{@ri_info[@ri_util][:yr_price]}"
-        puts "\"reserved upfront (doller)\" : #{@ri_info[@ri_util][:upfront]}"
-        puts "\"sweet spot day (day)\" : #{@ri_info[@ri_util][:sweet_spot_start_day]}"
-        puts "\"sweet spot date (date)\" : #{sweet_spot_date}"
-        puts "\"sweet spot price (doller)\" : #{@ri_info[@ri_util][:sweet_spot_price]}"
+        message = {
+          "region"                       => "#{@region}",
+          "instance_type"                => "#{@instance_type}",
+          "ri_util"                      => "#{@ri_util}",
+          "discont percent (percent)"    => "#{discount_per}",
+          "ondemand hour price (doller)" => "#{@om_info[:hr_price]}",
+          "reserved hour price (doller)" => "#{@ri_info[@ri_util][:hr_price]}",
+          "ondemand year price (doller)" => "#{@om_info[:yr_price]}",
+          "reserved year price (doller)" => "#{@ri_info[@ri_util][:yr_price]}",
+          "reserved upfront (doller)"    => "#{@ri_info[@ri_util][:upfront]}",
+          "sweet spot day (day)"         => "#{@ri_info[@ri_util][:sweet_spot_start_day]}",
+          "sweet spot date (date)"       => "#{sweet_spot_date}",
+          "sweet spot price (doller)"    => "#{@ri_info[@ri_util][:sweet_spot_price]}",
+        }
+        puts message.to_json
       end
     end
   end
