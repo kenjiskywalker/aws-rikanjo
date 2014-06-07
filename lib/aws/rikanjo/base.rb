@@ -5,7 +5,7 @@ require 'aws/rikanjo/calc'
 module Aws
   module RiKanjoo
     class Base < Calc
-      attr_reader :region, :instance_type, :ri_util
+      attr_reader :region, :instance_type, :ri_util, :multiaz
 
       def initialize(mode = 'ec2', region, instance_type, ri_util, multiaz)
         if mode == 'ec2'
