@@ -36,6 +36,11 @@ module Aws
           options[:ri_util] = value
         end
 
+        output_json = %w(true false)
+        opts.on('-j', '--output_json=BOOL', output_json, "specify output_json true") do |value|
+          options[:output_json] = value
+        end
+
         opts.on('-h', '--help') do
           puts opts
           exit
@@ -67,6 +72,7 @@ module Aws
           instance_type = options[:instance_type],
           ri_util = options[:ri_util],
           multiaz = options[:multiaz],
+          output_json = options[:output_json],
       )
       a.total_cost_year
     end
