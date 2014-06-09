@@ -1,14 +1,14 @@
 require "spec_helper"
-require "aws/rikanjo/mode/rds"
+require "aws/rikanjo/rds"
 
 include RikanjoSpecHelper
 
-describe 'AWS::Rikanjo::Mode::Rds' do
+describe 'AWS::Rikanjo::Rds' do
 
   describe 'url' do
 
     it "build previous price url" do
-      a = Aws::RiKanjoo::Mode::Rds.new(
+      a = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm1.large',
           ri_util       = 'light',
@@ -18,7 +18,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
     end
 
     it "build current price url" do
-      a = Aws::RiKanjoo::Mode::Rds.new(
+      a = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.large',
           ri_util       = 'light',
@@ -28,7 +28,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
     end
 
     it "build current om price file" do
-      a = Aws::RiKanjoo::Mode::Rds.new(
+      a = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm2.xlarge',
           ri_util       = 'medium',
@@ -38,7 +38,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
     end
 
     it "build current om price file(multiaz)" do
-      a = Aws::RiKanjoo::Mode::Rds.new(
+      a = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm2.xlarge',
           ri_util       = 'medium',
@@ -48,7 +48,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
     end
 
     it "build current ri price file" do
-      a = Aws::RiKanjoo::Mode::Rds.new(
+      a = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm2.xlarge',
           ri_util       = 'medium',
@@ -64,14 +64,14 @@ describe 'AWS::Rikanjo::Mode::Rds' do
 
     before :all do
       # rikanjo (single-az)
-      a1 = Aws::RiKanjoo::Mode::Rds.new(
+      a1 = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.medium',
           ri_util       = 'medium',
           multiaz       = false,
       )
       # rikanjo (multi-az)
-      a2 = Aws::RiKanjoo::Mode::Rds.new(
+      a2 = Aws::RiKanjoo::Rds.new(
           region        = 'ap-northeast-1',
           instance_type = 'm3.medium',
           ri_util       = 'medium',
@@ -84,7 +84,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
 
     it "is able to get the price(singleaz)" do
       regions.each do |region|
-        a = Aws::RiKanjoo::Mode::Rds.new(
+        a = Aws::RiKanjoo::Rds.new(
             region        = region,
             instance_type = 'm3.large',
             ri_util       = 'medium',
@@ -103,7 +103,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
 
     it "is able to get the price(multiaz)" do
       regions.each do |region|
-        a = Aws::RiKanjoo::Mode::Rds.new(
+        a = Aws::RiKanjoo::Rds.new(
             region        = region,
             instance_type = 'm3.large',
             ri_util       = 'medium',
@@ -122,7 +122,7 @@ describe 'AWS::Rikanjo::Mode::Rds' do
 
     it "an exception is raised when there are no instance-type" do
       regions.each do |region|
-        a = Aws::RiKanjoo::Mode::Rds.new(
+        a = Aws::RiKanjoo::Rds.new(
             region        = region,
             instance_type = 'm3.large.not.exists',
             ri_util       = 'medium',
