@@ -96,11 +96,7 @@ module Aws
           "sweet spot date (date)"       => "#{sweet_spot_date}",
           "sweet spot price (doller)"    => "#{@ri_info[@ri_util][:sweet_spot_price]}",
         }
-        if @output_json
-          puts message.to_json
-        else
-          puts message
-        end
+        return message
       end
     end
   end

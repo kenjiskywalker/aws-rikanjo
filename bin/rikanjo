@@ -3,4 +3,4 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'aws/rikanjo/cli'
 
-Aws::RiKanjoo::CLI.new
+Aws::RiKanjoo::CLI.new.start
