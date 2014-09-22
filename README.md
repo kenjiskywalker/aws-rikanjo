@@ -52,6 +52,7 @@ Usage: rikanjo ec2/rds [options]
     -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
     -t, --instance_type=VALUE        specify ec2-instance-type
     -u, --ri_util=VALUE              specify ri-util (light/medium/heavy)
+    -j, --output_json                specify output_json flg
     -h, --help
 ```
 
@@ -72,6 +73,7 @@ Usage: rikanjo ec2/rds [options]
     -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
     -t, --instance_type=VALUE        specify ec2-instance-type
     -u, --ri_util=VALUE              specify ri-util (light/medium/heavy)
+    -j, --output_json                specify output_json flg
     -h, --help
 ```
 
