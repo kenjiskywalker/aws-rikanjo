@@ -69,6 +69,7 @@ help text:
 ```
 $ rikanjo rds --help
 Usage: rikanjo ec2/rds [options]
+        --rdbms=VALUE                specify rdbms(mysql / aurora)
         --multiaz                    enable multi-az
     -r, --region=VALUE               specify aws-region (us-east-1/us-west-1/us-west-2/eu-west-1/ap-southeast-1/ap-northeast-1/ap-southeast-2/sa-east-1)
     -t, --instance_type=VALUE        specify ec2-instance-type
@@ -80,7 +81,7 @@ Usage: rikanjo ec2/rds [options]
 example:
 
 ```
-$ rikanjo rds -r ap-northeast-1 -t m2.xlarge -u heavy --multiaz
+$ rikanjo rds -r ap-northeast-1 -t r3.xlarge -u heavy --multiaz
 ```
 
 
