@@ -5,13 +5,13 @@ require 'aws/rikanjo/calc'
 module Aws
   module RiKanjoo
     class Base < Calc
-      attr_reader :region, :instance_type, :ri_util, :multiaz
+      attr_reader :region, :instance_type, :ri_util, :rdbms, :multiaz
 
-      def initialize(mode = 'ec2', region, instance_type, ri_util, multiaz)
+      def initialize(mode = 'ec2', region, instance_type, ri_util, rdbms, multiaz)
         if mode == 'ec2'
-          @mode = Aws::RiKanjoo::Ec2.new(region, instance_type, ri_util)
+          @mode = Aws::RiKanjoo::Ec2.new(region: region, instance_type: instance_type, ri_util: ri_util)
         elsif mode == 'rds'
-          @mode = Aws::RiKanjoo::Rds.new(region, instance_type, ri_util, multiaz)
+          @mode = Aws::RiKanjoo::Rds.new(region: region, instance_type: instance_type, ri_util: ri_util, rdbms: rdbms, multiaz: multiaz)
         end
         @region        = region
         @instance_type = instance_type

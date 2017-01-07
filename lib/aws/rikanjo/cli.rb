@@ -25,6 +25,9 @@ module Aws
           mode = ARGV.shift
           if mode == 'ec2'
           elsif mode == 'rds'
+            opts.on('--rdbms=VALUE', 'specify rdbms(mysql / aurora)') do |value|
+              @options[:rdbms] = value
+            end
             opts.on('--multiaz', 'enable multi-az') do |value|
               @options[:multiaz] = value
             end
@@ -85,6 +88,7 @@ module Aws
             region = @options[:region],
             instance_type = @options[:instance_type],
             ri_util = @options[:ri_util],
+            rdbms = @options[:rdbms],
             multiaz = @options[:multiaz],
         )
         @cost = a.total_cost_year
